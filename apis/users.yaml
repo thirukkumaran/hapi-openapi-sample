@@ -1,0 +1,275 @@
+openapi: 3.0.0
+info:
+  title: Users
+  version: '1.0'
+  description: User APIs
+  contact:
+    name: Thiru
+    email: thiru_natarajan@hive.gov.sg
+servers:
+  - url: 'http://localhost:3000'
+  - url: 'https://test-production'
+    description: ''
+paths:
+  '/users/{userId}':
+    parameters:
+      - schema:
+          type: string
+        name: userId
+        in: path
+        required: true
+        description: User Id
+    get:
+      summary: Get User Info by User ID
+      tags: []
+      responses:
+        '200':
+          description: User Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                Get User Alice Smith:
+                  value:
+                    id: 142
+                    firstName: Alice
+                    lastName: Smith
+                    email: alice.smith@gmail.com
+                    dateOfBirth: '1997-10-31'
+                    emailVerified: true
+                    signUpDate: '2019-08-24'
+        '404':
+          description: User Not Found
+      operationId: get-users-userId
+      description: Retrieve the information of the user with the matching user ID.
+    patch:
+      summary: Update User Information
+      operationId: patch-users-userId
+      responses:
+        '200':
+          description: User Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                Updated User Rebecca Baker:
+                  value:
+                    id: 13
+                    firstName: Rebecca
+                    lastName: Baker
+                    email: rebecca@gmail.com
+                    dateOfBirth: '1985-10-02'
+                    emailVerified: false
+                    createDate: '2019-08-24'
+        '404':
+          description: User Not Found
+        '409':
+          description: Email Already Taken
+      description: Update the information of an existing user.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                  description: 'If a new email is given, the user''s email verified property will be set to false.'
+                dateOfBirth:
+                  type: string
+            examples:
+              Update First Name:
+                value:
+                  firstName: Rebecca
+              Update Email:
+                value:
+                  email: rebecca@gmail.com
+              Update Last Name & Date of Birth:
+                value:
+                  lastName: Baker
+                  dateOfBirth: '1985-10-02'
+        description: Patch user properties to update.
+  /users:
+    post:
+      summary: Create New User
+      operationId: post-user
+      responses:
+        '200':
+          description: User Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                New User Bob Fellow:
+                  value:
+                    id: 12
+                    firstName: Bob
+                    lastName: Fellow
+                    email: bob.fellow@gmail.com
+                    dateOfBirth: '1996-08-24'
+                    emailVerified: false
+                    createDate: '2020-11-18'
+        '400':
+          description: Missing Required Information
+        '409':
+          description: Email Already Taken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              x-examples:
+                example-1:
+                  firstName: Alice
+                  lastName: Smith
+                  email: alice.smith@gmail.com
+                  dateOfBirth: '1997-10-31'
+              properties:
+                firstName:
+                  type: string
+                  minLength: 1
+                lastName:
+                  type: string
+                  minLength: 1
+                email:
+                  type: string
+                  minLength: 1
+                  format: email
+                dateOfBirth:
+                  type: string
+                  minLength: 1
+                  format: date
+              required:
+                - firstName
+                - lastName
+                - email
+                - dateOfBirth
+          application/xml:
+            schema:
+              type: object
+              properties: {}
+          multipart/form-data:
+            schema:
+              type: object
+              properties: {}
+            examples:
+              example-1:
+                value: {}
+        description: Post the necessary fields for the API to create a new user.
+      description: Create a new user.
+    parameters: []
+components:
+  schemas:
+    User:
+      title: User
+      type: object
+      description: ''
+      x-examples:
+        Alice Smith:
+          id: 142
+          firstName: Alice
+          lastName: Smith
+          email: alice.smith@gmail.com
+          dateOfBirth: '1997-10-31'
+          emailVerified: true
+          signUpDate: '2019-08-24'
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the given user.
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        dateOfBirth:
+          type: string
+          format: date
+          example: '1997-10-31'
+        emailVerified:
+          type: boolean
+          description: Set to true if the user's email has been verified.
+        createDate:
+          type: string
+          format: date
+          description: The date that the user was created.
+      required:
+        - id
+        - firstName
+        - lastName
+        - email
+        - emailVerified
+    Error:
+      title: Error
+      type: object
+      properties:
+        id:
+          type: string
+  requestBodies:
+    CreateUser:
+      content:
+        application/json:
+          schema:
+            description: ''
+            type: object
+            properties:
+              firstName:
+                type: string
+                minLength: 1
+              lastName:
+                type: string
+                minLength: 1
+              email:
+                type: string
+                minLength: 1
+              dateOfBirth:
+                type: string
+                minLength: 1
+            required:
+              - firstName
+              - lastName
+              - email
+              - dateOfBirth
+            x-examples:
+              example-1:
+                firstName: Bob
+                lastName: Fellow
+                email: bob.fellow@gmail.com
+                dateOfBirth: '1996-08-24'
+          examples:
+            CreateUser:
+              value:
+                firstName: Bob
+                lastName: Fellow
+                email: bob.fellow@gmail.com
+                dateOfBirth: '1996-08-24'
+      description: ''
+  parameters:
+    userId:
+      name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: User Id
+  responses:
+    '400':
+      description: Example response
+      content:
+        application/json:
+          schema:
+            properties:
+              id:
+                type: string
+  examples: {}
+  securitySchemes: {}
