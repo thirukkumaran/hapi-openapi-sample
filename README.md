@@ -2,7 +2,7 @@
 
 # API endpoints
 
-The following endpoins are created with Stoplight studio ( https://stoplight.io/ ), please refer API descriptions at /apis/users.yaml
+The following endpoints are created with Stoplight studio ( https://stoplight.io/ ), please refer API descriptions at /apis/users.yaml
 
 ```
 POST /users            - Create new user
