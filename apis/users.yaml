@@ -8,65 +8,29 @@ info:
     email: thiru_natarajan@hive.gov.sg
 servers:
   - url: 'http://localhost:3000'
-  - url: 'https://test-production'
-    description: ''
 paths:
   '/users/{userId}':
     parameters:
-      - schema:
-          type: string
-        name: userId
-        in: path
-        required: true
-        description: User Id
+      - $ref: '#/components/parameters/userId'
     get:
       summary: Get User Info by User ID
       tags: []
       responses:
         '200':
-          description: User Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-              examples:
-                Get User Alice Smith:
-                  value:
-                    id: 142
-                    firstName: Alice
-                    lastName: Smith
-                    email: alice.smith@gmail.com
-                    dateOfBirth: '1997-10-31'
-                    emailVerified: true
-                    signUpDate: '2019-08-24'
-        '404':
-          description: User Not Found
+          $ref: '#/components/responses/200-GetUser'
+        '400':
+          $ref: '#/components/responses/400'
       operationId: get-users-userId
       description: Retrieve the information of the user with the matching user ID.
+      parameters: []
     patch:
       summary: Update User Information
       operationId: patch-users-userId
       responses:
         '200':
-          description: User Updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-              examples:
-                Updated User Rebecca Baker:
-                  value:
-                    id: 13
-                    firstName: Rebecca
-                    lastName: Baker
-                    email: rebecca@gmail.com
-                    dateOfBirth: '1985-10-02'
-                    emailVerified: false
-                    createDate: '2019-08-24'
-        '404':
-          description: User Not Found
-        '409':
-          description: Email Already Taken
+          $ref: '#/components/responses/200-PatchUser'
+        '400':
+          $ref: '#/components/responses/400'
       description: Update the information of an existing user.
       requestBody:
         content:
@@ -100,37 +64,21 @@ paths:
       summary: Create New User
       operationId: post-user
       responses:
-        '200':
-          description: User Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-              examples:
-                New User Bob Fellow:
-                  value:
-                    id: 12
-                    firstName: Bob
-                    lastName: Fellow
-                    email: bob.fellow@gmail.com
-                    dateOfBirth: '1996-08-24'
-                    emailVerified: false
-                    createDate: '2020-11-18'
+        '201':
+          $ref: '#/components/responses/201-CreateUser'
         '400':
-          description: Missing Required Information
-        '409':
-          description: Email Already Taken
+          $ref: '#/components/responses/400'
       requestBody:
         content:
           application/json:
             schema:
-              description: ''
+              description: User
               type: object
               x-examples:
                 example-1:
-                  firstName: Alice
-                  lastName: Smith
-                  email: alice.smith@gmail.com
+                  firstName: string
+                  lastName: string
+                  email: user@example.com
                   dateOfBirth: '1997-10-31'
               properties:
                 firstName:
@@ -141,17 +89,25 @@ paths:
                   minLength: 1
                 email:
                   type: string
-                  minLength: 1
                   format: email
                 dateOfBirth:
                   type: string
-                  minLength: 1
                   format: date
               required:
                 - firstName
                 - lastName
                 - email
                 - dateOfBirth
+            examples:
+              example-1:
+                value:
+                  id: 0
+                  firstName: string
+                  lastName: string
+                  email: user@example.com
+                  dateOfBirth: '1997-10-31'
+                  emailVerified: true
+                  createDate: '2019-08-24'
           application/xml:
             schema:
               type: object
@@ -163,15 +119,22 @@ paths:
             examples:
               example-1:
                 value: {}
+          text/html:
+            schema:
+              type: object
+              properties: {}
         description: Post the necessary fields for the API to create a new user.
-      description: Create a new user.
+      description: Create new user.
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+      security: []
     parameters: []
 components:
   schemas:
     User:
       title: User
       type: object
-      description: ''
+      description: User Model
       x-examples:
         Alice Smith:
           id: 142
@@ -185,10 +148,14 @@ components:
         id:
           type: integer
           description: Unique identifier for the given user.
+          format: int32
+          minimum: 1
         firstName:
           type: string
+          minLength: 1
         lastName:
           type: string
+          minLength: 1
         email:
           type: string
           format: email
@@ -208,52 +175,30 @@ components:
         - firstName
         - lastName
         - email
-        - emailVerified
+        - dateOfBirth
     Error:
-      title: Error
+      description: Error model
       type: object
+      x-examples:
+        example-1:
+          statuCode: 400
+          error: Bad Request
+          message: Invalid request headers input
       properties:
-        id:
+        statuCode:
+          type: number
+        error:
           type: string
-  requestBodies:
-    CreateUser:
-      content:
-        application/json:
-          schema:
-            description: ''
-            type: object
-            properties:
-              firstName:
-                type: string
-                minLength: 1
-              lastName:
-                type: string
-                minLength: 1
-              email:
-                type: string
-                minLength: 1
-              dateOfBirth:
-                type: string
-                minLength: 1
-            required:
-              - firstName
-              - lastName
-              - email
-              - dateOfBirth
-            x-examples:
-              example-1:
-                firstName: Bob
-                lastName: Fellow
-                email: bob.fellow@gmail.com
-                dateOfBirth: '1996-08-24'
-          examples:
-            CreateUser:
-              value:
-                firstName: Bob
-                lastName: Fellow
-                email: bob.fellow@gmail.com
-                dateOfBirth: '1996-08-24'
-      description: ''
+          minLength: 1
+        message:
+          type: string
+          minLength: 1
+      required:
+        - statuCode
+        - error
+        - message
+      title: Error
+  requestBodies: {}
   parameters:
     userId:
       name: userId
@@ -262,14 +207,53 @@ components:
       schema:
         type: string
       description: User Id
+    Authorization:
+      name: Authorization
+      in: header
+      required: false
+      schema:
+        type: string
+      description: Authorization token
   responses:
     '400':
       description: Example response
       content:
         application/json:
           schema:
-            properties:
-              id:
-                type: string
+            $ref: '#/components/schemas/Error'
+          examples:
+            example-1:
+              value:
+                statuCode: 400
+                error: Bad Request
+                message: Invalid request headers input
+    201-CreateUser:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+    200-PatchUser:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+    200-GetUser:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+          examples:
+            example-1:
+              value:
+                id: 1
+                firstName: string
+                lastName: string
+                email: user@example.com
+                dateOfBirth: '1997-10-31'
+                emailVerified: true
+                createDate: '2019-08-24'
   examples: {}
   securitySchemes: {}

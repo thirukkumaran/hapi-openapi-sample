@@ -19,6 +19,14 @@ const server = new Hapi.Server({
 
  async function setup () {
 
+  await server.register({
+    plugin: HapiOpenApi,
+    options: {
+      api: Path.join(__dirname, './apis/users.yaml'),
+      handlers: Path.join(__dirname, './handlers'),
+    },
+  });
+
   server.route({
     method: 'get',
     path: '/',
