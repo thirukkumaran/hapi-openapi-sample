@@ -15,10 +15,13 @@ module.exports = {
    */
   get: function getUser (request, h) {
     const response = {
+      id: "324234",
       firstName: "Thiru",
       lastName: "Natarajan",
-      email: "thiru_natarajan@hive.gov.sg",
-      dateOfBirth: "2000-08-24",
+      email: "test@test.com",
+      dateOfBirth: "2000-10-31",
+      emailVerified: false,
+      createDate: "2022-03-04"
     };
     return h.response(response).code(200);
   },
@@ -30,11 +33,15 @@ module.exports = {
    * responses: 200
    */
   patch: function UpdateUser (request, h) {
+
     const response = {
+      id: "324234",
       firstName: "Thiru",
       lastName: "Natarajan",
-      email: "thiru_natarajan@hive.gov.sg",
-      dateOfBirth: "2000-08-24",
+      email: "test@test.com",
+      dateOfBirth: "2000-10-31",
+      emailVerified: false,
+      createDate: "2022-03-04"
     };
     return h.response(response).code(200);
   },

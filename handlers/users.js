@@ -13,11 +13,15 @@ module.exports = {
    */
   post: function createUser(request, h) {
     const response = {
+      id: "324234",
       firstName: "Thiru",
       lastName: "Natarajan",
-      email: "thiru_natarajan@hive.gov.sg",
-      dateOfBirth: "2000-08-24",
+      email: "test@test.com",
+      dateOfBirth: "2000-10-31",
+      createDate: "2022-03-04",
+      "emailVerified": false,
+
     };
-    return h.response(response).code(200);
+    return h.response(response).code(201);
   },
 };
