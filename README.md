@@ -44,7 +44,7 @@ To read an user
 
 ```
 curl --request GET \
-  --url http://127.0.0.1:3100/users/1 \
+  --url http://localhost:3000/users/1 \
   --header 'Content-Type: application/json'
 ```
 
@@ -52,7 +52,7 @@ To update an user
 
 ```
 curl --request PATCH \
-  --url http://127.0.0.1:3100/users/1 \
+  --url http://localhost:3000/users/1 \
   --header 'Content-Type: application/json' \
   --data '{
   "firstName": "Thiru"
