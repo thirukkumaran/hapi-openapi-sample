@@ -2,7 +2,6 @@ const Hapi = require('@hapi/hapi');
 const Path = require('path');
 const HapiOpenApi = require('hapi-openapi');
 const Boom = require('@hapi/boom');
-const authKeycloak = require('hapi-auth-keycloak');
 
 const server = new Hapi.Server({
   port: process.env.ENGINE_PORT || 3000,
@@ -19,18 +18,6 @@ const server = new Hapi.Server({
 });
 
  async function setup () {
-
-   // await server.register({
-  //   plugin: authKeycloak,
-  // });
-
-  // server.auth.strategy("keycloak-jwt", "keycloak-jwt", {
-  //   realmUrl: "http://localhost:8081/auth/realms/master",
-  //   clientId: "cft",
-  //   minTimeBetweenJwksRequests: 15,
-  //   cache: true,
-  //   userInfo: ["name", "email"],
-  // });
 
   await server.register({
     plugin: HapiOpenApi,
