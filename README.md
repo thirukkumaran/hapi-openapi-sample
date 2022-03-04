@@ -55,7 +55,7 @@ curl --request PATCH \
   --url http://localhost:3000/users/1 \
   --header 'Content-Type: application/json' \
   --data '{
-  "firstName": "Thiru"
-  "lastName": "Natarajan",
+  "firstName": "Thiru",
+  "lastName": "Natarajan"
 }'
 ```
